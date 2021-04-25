@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">KidPlan</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+
+    <string name="list_dialog_title">Dynamic Update</string>
+    <string name="func_dialog_title">功能支持</string>
+
+    <string name="flyme">Flyme</string>
+    <string name="flyme_desc">Meizu mobile phone calendar</string>
+
+    <string name="custom_china">Beautiful Chinese style</string>
+    <string name="custom_china_desc">Beautiful Chinese style custom</string>
+    <string name="mix">Beautiful Mix style</string>
+    <string name="mix_desc">Beautiful Mix style</string>
+    <string name="full">Full screen style</string>
+    <string name="full_desc">If you need a full screen calendar</string>
+    <string name="range">Range selection</string>
+    <string name="range_desc">Range selection style if you need</string>
+
+    <string name="multi">Multiple selection</string>
+    <string name="multi_desc">Multiple selection style if you need</string>
+
+    <string name="colorful">Colorful style</string>
+    <string name="colorful_desc">Everything what you need</string>
+
+    <string name="view_pager">ViewPager style</string>
+    <string name="view_pager_desc">ViewPager content </string>
+
+    <string name="single">Radio style</string>
+    <string name="single_desc">Radio style may be very popular</string>
+
+    <string name="progress">Progress bar style</string>
+    <string name="progress_desc">If you are developing a todo application</string>
+
+    <string name="index">Subscript style</string>
+    <string name="index_desc">Everything depends on how you draw</string>
+
+    <string name="galaxy">Galaxy style</string>
+    <string name="galaxy_desc">So easy to customize</string>
+
+    <string name="simple">Simple style</string>
+    <string name="simple_desc">Simple calendar</string>
+
+    <string-array name="list_dialog_items">
+        <item>周日为周起始</item>
+        <item>周一为周起始</item>
+        <item>周六为周起始</item>
+        <item>更换选择模式：单选/默认</item>
+        <item>热插拔更换周月视图</item>
+        <item>月视图模式：全部显示</item>
+        <item>月视图模式：仅当前月份</item>
+        <item>月视图模式：自动填充</item>
+    </string-array>
+    <string-array name="func_dialog_items">
+        <item>展开日历布局</item>
+        <item>收缩日历布局</item>
+        <item>上一页</item>
+        <item>下一页</item>
+        <item>返回今天</item>
+        <item>限制日期范围</item>
+        <item>显示日期范围</item>
+    </string-array>
+</resources>
