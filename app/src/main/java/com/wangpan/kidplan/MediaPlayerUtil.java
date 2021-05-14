@@ -7,12 +7,16 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MediaPlayerUtil {
     private static String TAG = CommonUtils.COMMON_TAG + "MediaPlayerUtil";
     private MediaPlayer mMediaPlayer = new MediaPlayer();
     private static MediaPlayerUtil mMediaPlayUtil = new MediaPlayerUtil();
     private MediaPlayerStateCallback mCallback;
+    private Timer mTimer;
+    private TimerTask mTimerTask;
 
     private MediaPlayerUtil(){}
     public static MediaPlayerUtil getInstance() {
@@ -20,6 +24,7 @@ public class MediaPlayerUtil {
     }
     public interface MediaPlayerStateCallback {
         void onPrepared(int duration, int curPosition);
+        void onProgress(int curPosition);
     }
 
     public void setMediaPlayerStateCallback(MediaPlayerStateCallback callback) {
@@ -30,7 +35,6 @@ public class MediaPlayerUtil {
         Log.d(TAG, "startPlay, uri:" + uri);
         try {
             mMediaPlayer.setDataSource(context.getApplicationContext(), uri);
-//            mMediaPlayer.setDataSource("/sdcard/tingwoshuoxiexieni.mp3");
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -48,6 +52,17 @@ public class MediaPlayerUtil {
                     return false;
                 }
             });
+
+            //play progress
+            mTimer = new Timer();
+            mTimerTask = new TimerTask(){
+
+                @Override
+                public void run() {
+                    mCallback.onProgress(mMediaPlayer.getCurrentPosition());
+                }
+            };
+            mTimer.schedule(mTimerTask, 0, 10);
         } catch (IOException e) {
             Log.e(TAG, "exp.", e);
             e.printStackTrace();

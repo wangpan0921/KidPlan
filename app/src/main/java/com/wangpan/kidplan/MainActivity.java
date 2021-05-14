@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TimePicker tp_time;
     private Button btn_add;
     private SeekBar sb_sound;
-    private Timer mTimer;
-    private TimerTask mTimerTask;
     private ArrayList mAudioList = null;
 
     @Override
@@ -256,16 +254,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPrepared(final int duration, final int curPosition) {
             sb_sound.setMax(duration);
-            //play progress
-            mTimer = new Timer();
-            mTimerTask = new TimerTask(){
+        }
 
-                @Override
-                public void run() {
-                    sb_sound.setProgress(curPosition);
-                }
-            };
-            mTimer.schedule(mTimerTask, 0, 10);
+        @Override
+        public void onProgress(int curPosition) {
+            sb_sound.setProgress(curPosition);
         }
     }
 }
