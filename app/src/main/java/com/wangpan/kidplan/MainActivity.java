@@ -19,19 +19,27 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int REQUEST_OPEN_FILE = 1;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = CommonUtils.COMMON_TAG + MainActivity.class.getSimpleName();
     private Button btn_yes;
     private TimePicker tp_time;
     private Button btn_add;
-    private MediaPlayer mediaPlayer;
+    private SeekBar sb_sound;
+    private Timer mTimer;
+    private TimerTask mTimerTask;
+    private ArrayList mAudioList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +49,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_yes = (Button)findViewById(R.id.btn_yes);
         tp_time = (TimePicker)findViewById(R.id.tp_time);
         btn_add = (Button)findViewById(R.id.btn_add);
+        sb_sound = (SeekBar)findViewById(R.id.sb_sound);
         btn_yes.setOnClickListener(this);
         btn_add.setOnClickListener(this);
+
+        MediaPlayerUtil.getInstance().setMediaPlayerStateCallback(new MediaPlayerStateCallbackImpl());
+
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_yes:
-                String desc = String.format("选择时间%d时%d分",tp_time.getCurrentHour(),tp_time.getCurrentMinute());
+                String desc = String.format("选择时间%d时%d分", tp_time.getCurrentHour(), tp_time.getCurrentMinute());
 //                tv_distime.setText(desc);
                 Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_LONG).show();
+                //传入歌单和时间
+                AlarmManagerUtil.TimeInfo timeInfo = new AlarmManagerUtil.TimeInfo(tp_time.getCurrentHour(), tp_time.getCurrentMinute());
+                AlarmManagerUtil.getInstance(MainActivity.this).schedulePlay(getApplicationContext(), mAudioList, timeInfo);
                 break;
             case R.id.btn_add:
 
@@ -80,7 +95,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 path = uri.getPath();
 //                tv.setText(path);
                 Toast.makeText(this,path,Toast.LENGTH_SHORT).show();
-                startPlay(uri);
+
+                if(null == mAudioList) {
+                    mAudioList = new ArrayList();
+                }
+                mAudioList.add(uri);
+//                MediaPlayerUtil.getInstance().startPlay(getApplicationContext(), uri);
                 return;
 //            }
 //            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {//4.4以后
@@ -224,37 +244,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    public void startPlay(Uri uri) {
-Log.d(TAG, "startPlay");
-        mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(getApplicationContext(), uri);
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.start();
-                }
-            });
-        } catch (IOException e) {
-            Log.e(TAG, "exp.", e);
-            e.printStackTrace();
-        }
-
-    }
-
-    public void stopPlay() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopPlay();
+        MediaPlayerUtil.getInstance().stopPlay();
+        MediaPlayerUtil.getInstance().setMediaPlayerStateCallback(null);
+    }
+
+    class MediaPlayerStateCallbackImpl implements MediaPlayerUtil.MediaPlayerStateCallback {
+
+        @Override
+        public void onPrepared(final int duration, final int curPosition) {
+            sb_sound.setMax(duration);
+            //play progress
+            mTimer = new Timer();
+            mTimerTask = new TimerTask(){
+
+                @Override
+                public void run() {
+                    sb_sound.setProgress(curPosition);
+                }
+            };
+            mTimer.schedule(mTimerTask, 0, 10);
+        }
     }
 }
